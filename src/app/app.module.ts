@@ -19,7 +19,7 @@ import { PostListComponent } from './posts/post-list/post-list.component';
     AppComponent,
     PostsCreateComponent,
     HeaderComponent,
-    PostListComponent
+    PostListComponent,
   ],
   imports: [
     BrowserModule,
