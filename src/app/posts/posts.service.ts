@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Post } from './post.model';
+import { map } from 'rxjs/operators';
+import { Post, PostResponse } from './post.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,14 +15,33 @@ export class PostsService {
 
   getPosts(): void {
     this.http
-      .get<{ message: string; posts: Post[] }>(
-        'http://localhost:3000/api/posts'
+      .get<{ message: string; posts: any }>('http://localhost:3000/api/posts')
+      .pipe(
+        map((postData: any) => {
+          return postData.posts.map((post: PostResponse) => {
+            return {
+              title: post.title,
+              content: post.content,
+              id: post._id,
+            };
+          });
+        })
       )
-      .subscribe((postData) => {
-        this.posts = postData.posts;
+      .subscribe((transformedPosts) => {
+        this.posts = transformedPosts;
         this.postUpdated.next([...this.posts]);
       });
   }
+  // getPosts(): void {
+  //   this.http
+  //     .get<{ message: string; posts: Post[] }>(
+  //       'http://localhost:3000/api/posts'
+  //     )
+  //     .subscribe((postData) => {
+  //       this.posts = postData.posts;
+  //       this.postUpdated.next([...this.posts]);
+  //     });
+  // }
 
   getPostUpdateListener(): Observable<Post[]> {
     return this.postUpdated.asObservable();
