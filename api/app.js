@@ -26,7 +26,7 @@ app.use((req, res, next) => {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
   res.setHeader(
-    "Allow-Control-Allow-Methods",
+    "Access-Control-Allow-Methods",
     "GET, POST, PATCH, DELETE, OPTIONS"
   );
   next();
@@ -50,5 +50,14 @@ app.get("/api/posts", (req, res, next) => {
       posts: documents,
     });
   });
+});
+
+app.delete("/api/posts/:id", (req, res, next) => {
+  console.log(req.params);
+  Post.deleteOne({ _id: req.params.id })
+    .then(() => {
+      res.status(200).json({ message: "Post deleted!" });
+    })
+    .catch((err) => console.log("Catched error!", err));
 });
 module.exports = app;

@@ -53,6 +53,14 @@ export class PostsService {
         console.log(res.message);
         this.posts.push(post);
         this.postUpdated.next([...this.posts]);
+        this.getPosts();
+      });
+  }
+  deletePost(postId: string) {
+    this.http
+      .delete('http://localhost:3000/api/posts/' + postId)
+      .subscribe(() => {
+        this.getPosts();
       });
   }
 }
