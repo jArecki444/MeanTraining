@@ -12,7 +12,7 @@ import { PostsService } from '../posts.service';
 export class PostsCreateComponent implements OnInit {
   public enteredTitle = '';
   public enteredContent = '';
-
+  public isLoading = false;
   public mode = 'create';
   public postId: string | null = null;
   public postToEdit: Post | undefined;
@@ -28,12 +28,14 @@ export class PostsCreateComponent implements OnInit {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
         if (this.postId) {
+          this.isLoading = true;
           this.postService.getPost(this.postId).subscribe((res) => {
             this.postToEdit = {
               id: res._id,
               title: res.title,
               content: res.content,
             };
+            this.isLoading = false;
           });
         }
       } else {
@@ -49,8 +51,7 @@ export class PostsCreateComponent implements OnInit {
       title: form.value.title,
       content: form.value.content,
     };
-    console.log('mode', this.mode);
-    console.log('postId', this.postId);
+    this.isLoading = true;
     if (this.mode === 'create') {
       this.postService.addPost(post);
       form.resetForm();
