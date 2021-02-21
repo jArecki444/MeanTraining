@@ -46,11 +46,8 @@ export class PostsService {
   getPostUpdateListener(): Observable<Post[]> {
     return this.postUpdated.asObservable();
   }
-  getPost(id: string): Post | undefined {
-    const selectedPost: Post | undefined = this.posts.find(
-      (post) => post.id === id
-    );
-    return selectedPost;
+  getPost(id: string): Observable<PostResponse> {
+    return this.http.get<PostResponse>(`http://localhost:3000/api/posts/${id}`);
   }
   addPost(post: Post): void {
     this.http
