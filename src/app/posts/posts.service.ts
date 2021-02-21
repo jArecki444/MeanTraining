@@ -46,6 +46,12 @@ export class PostsService {
   getPostUpdateListener(): Observable<Post[]> {
     return this.postUpdated.asObservable();
   }
+  getPost(id: string): Post | undefined {
+    const selectedPost: Post | undefined = this.posts.find(
+      (post) => post.id === id
+    );
+    return selectedPost;
+  }
   addPost(post: Post): void {
     this.http
       .post<{ message: string }>('http://localhost:3000/api/posts', post)
@@ -56,7 +62,15 @@ export class PostsService {
         this.getPosts();
       });
   }
-  deletePost(postId: string) {
+  updatePost(postId: string, postTitle: string, postContent: string): void {
+    const post: Post = { id: postId, title: postTitle, content: postContent };
+    this.http
+      .put(`http://localhost:3000/api/posts/${postId}`, post)
+      .subscribe((res) => {
+        console.log(res);
+      });
+  }
+  deletePost(postId: string): void {
     this.http
       .delete('http://localhost:3000/api/posts/' + postId)
       .subscribe(() => {
