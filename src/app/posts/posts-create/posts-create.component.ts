@@ -17,6 +17,7 @@ export class PostsCreateComponent implements OnInit {
   public postId: string | null = null;
   public postToEdit: Post | undefined;
   public form: FormGroup;
+  public imagePreview: string;
 
   constructor(
     private postService: PostsService,
@@ -31,6 +32,7 @@ export class PostsCreateComponent implements OnInit {
       content: new FormControl(null, {
         validators: [Validators.required, Validators.minLength(10)],
       }),
+      image: new FormControl(null, { validators: [Validators.required] }),
     });
 
     // Load post based on postId url parameter (edit mode)
@@ -60,6 +62,20 @@ export class PostsCreateComponent implements OnInit {
         this.postId = null;
       }
     });
+  }
+
+  public onImagePicked(event: any): void {
+    if (event.target) {
+      const file = event.target.files[0];
+      this.form.patchValue({ image: file });
+      this.form.get('image')?.updateValueAndValidity();
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      }
+      reader.readAsDataURL(file);
+    }
   }
 
   public onSavePost(): void {
