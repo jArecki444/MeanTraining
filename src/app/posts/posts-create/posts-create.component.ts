@@ -73,7 +73,7 @@ export class PostsCreateComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result as string;
-      }
+      };
       reader.readAsDataURL(file);
     }
   }
@@ -84,6 +84,10 @@ export class PostsCreateComponent implements OnInit {
       title: this.form.value.title,
       content: this.form.value.content,
     };
+    if (this.form.value.image) {
+      post.file = this.form.value.image;
+    }
+
     this.isLoading = true;
     if (this.mode === 'create') {
       this.postService.addPost(post);
