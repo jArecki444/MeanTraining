@@ -42,20 +42,30 @@ router.post(
   }
 );
 
-router.put("/:id", (req, res, next) => {
-  const post = new Post({
-    _id: req.params.id,
-    title: req.body.title,
-    content: req.body.content,
-  });
-  Post.updateOne({ _id: req.params.id }, post)
-    .then((response) => {
-      res.status(201).json({
-        message: "Post updated successfully",
-      });
-    })
-    .catch((err) => console.log("Catched error!", err));
-});
+router.put(
+  "/:id",
+  multer({ storage: multerConfig }).single("image"),
+  (req, res, next) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      imagePath = url + "/images/" + req.file.filename;
+    }
+    const post = new Post({
+      _id: req.params.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath,
+    });
+    Post.updateOne({ _id: req.params.id }, post)
+      .then((response) => {
+        res.status(201).json({
+          message: "Post updated successfully",
+        });
+      })
+      .catch((err) => console.log("Catched error!", err));
+  }
+);
 
 router.get("", (req, res, next) => {
   Post.find().then((documents) => {

@@ -2,7 +2,7 @@ export interface Post {
   id: string | null;
   title: string;
   content: string;
-  file?: File;
+  file?: File | string;
   imagePath?: string;
 }
 export interface PostResponse {

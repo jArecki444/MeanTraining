@@ -68,12 +68,31 @@ export class PostsService {
         this.router.navigate(['/']);
       });
   }
-  updatePost(postId: string, postTitle: string, postContent: string): void {
-    const post: Post = { id: postId, title: postTitle, content: postContent };
+  updatePost(
+    postId: string,
+    postTitle: string,
+    postContent: string,
+    postImage: File | string
+  ): void {
+    let postData: FormData | Post;
+    if (typeof postImage === 'object') {
+      postData = new FormData();
+      postData.append('title', postTitle);
+      postData.append('content', postContent);
+      postData.append('image', postImage, 'fileName');
+      postData.append('id', postId);
+    } else {
+      postData = {
+        id: postId,
+        title: postTitle,
+        content: postContent,
+        imagePath: postImage,
+      };
+    }
     this.http
-      .put(`http://localhost:3000/api/posts/${postId}`, post)
+      .put(`http://localhost:3000/api/posts/${postId}`, postData)
       .subscribe((res) => {
-        console.log(res);
+        console.log('updatePost', res);
         this.router.navigate(['/']);
       });
   }

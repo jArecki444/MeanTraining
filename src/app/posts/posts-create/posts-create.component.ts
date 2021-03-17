@@ -47,13 +47,20 @@ export class PostsCreateComponent implements OnInit {
               id: res._id,
               title: res.title,
               content: res.content,
+              file: res.imagePath,
             };
             this.isLoading = false;
             if (this.postToEdit) {
               this.form.setValue({
                 title: this.postToEdit.title,
                 content: this.postToEdit.content,
+                image: this.postToEdit.imagePath
+                  ? this.postToEdit.imagePath
+                  : '',
               });
+              if (res.imagePath) {
+                this.imagePreview = res.imagePath;
+              }
             }
           });
         }
@@ -62,6 +69,7 @@ export class PostsCreateComponent implements OnInit {
         this.postId = null;
       }
     });
+    console.log('this.imagePreview', this.imagePreview);
   }
 
   public onImagePicked(event: any): void {
@@ -83,18 +91,21 @@ export class PostsCreateComponent implements OnInit {
       id: null,
       title: this.form.value.title,
       content: this.form.value.content,
+      file: this.form.value.image,
     };
-    if (this.form.value.image) {
-      post.file = this.form.value.image;
-    }
 
     this.isLoading = true;
     if (this.mode === 'create') {
       this.postService.addPost(post);
       this.form.reset();
     } else {
-      if (this.postId) {
-        this.postService.updatePost(this.postId, post.title, post.content);
+      if (this.postId && post.file) {
+        this.postService.updatePost(
+          this.postId,
+          post.title,
+          post.content,
+          post.file
+        );
       }
     }
   }
