@@ -32,7 +32,6 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   onDelete(id: string | null): void {
-    console.log('id', id);
     if (id) {
       this.postsService.deletePost(id);
     }

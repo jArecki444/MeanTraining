@@ -69,7 +69,6 @@ export class PostsCreateComponent implements OnInit {
         this.postId = null;
       }
     });
-    console.log('this.imagePreview', this.imagePreview);
   }
 
   public onImagePicked(event: any): void {
