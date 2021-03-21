@@ -3,54 +3,41 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Post, PostResponse } from './post.model';
+import { Post, PostList, PostResponse } from './post.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostsService {
-  private posts: Post[] = [];
-  private postUpdated = new Subject<Post[]>();
-
   constructor(private http: HttpClient, private router: Router) {}
 
-  getPosts(): void {
-    this.http
-      .get<{ message: string; posts: any }>('http://localhost:3000/api/posts')
+  getPosts(pageSize: number, currentPage: number): Observable<any> {
+    const queryParams = `?pageSize=${pageSize}&currentPage=${currentPage}`;
+    return this.http
+      .get<{ message: string; posts: any; totalPosts: number }>(
+        'http://localhost:3000/api/posts' + queryParams
+      )
       .pipe(
         map((postData: any) => {
-          return postData.posts.map((post: PostResponse) => {
-            return {
-              title: post.title,
-              content: post.content,
-              id: post._id,
-              imagePath: post.imagePath,
-            };
-          });
+          return {
+            posts: postData.posts.map((post: PostResponse) => {
+              return {
+                title: post.title,
+                content: post.content,
+                id: post._id,
+                imagePath: post.imagePath,
+              };
+            }),
+            totalPosts: postData.totalPosts,
+          };
         })
-      )
-      .subscribe((transformedPosts) => {
-        this.posts = transformedPosts;
-        this.postUpdated.next([...this.posts]);
-      });
+      );
   }
-  // getPosts(): void {
-  //   this.http
-  //     .get<{ message: string; posts: Post[] }>(
-  //       'http://localhost:3000/api/posts'
-  //     )
-  //     .subscribe((postData) => {
-  //       this.posts = postData.posts;
-  //       this.postUpdated.next([...this.posts]);
-  //     });
-  // }
 
-  getPostUpdateListener(): Observable<Post[]> {
-    return this.postUpdated.asObservable();
-  }
   getPost(id: string): Observable<PostResponse> {
     return this.http.get<PostResponse>(`http://localhost:3000/api/posts/${id}`);
   }
+
   addPost(post: Post): void {
     const postData = new FormData();
     postData.append('title', post.title);
@@ -62,9 +49,7 @@ export class PostsService {
       .post<{ message: string }>('http://localhost:3000/api/posts', postData)
       .subscribe((res) => {
         console.log(res.message);
-        // this.posts.push(post);
-        // this.postUpdated.next([...this.posts]);
-        this.getPosts();
+        this.getPosts(10, 0);
         this.router.navigate(['/']);
       });
   }
@@ -96,11 +81,7 @@ export class PostsService {
         this.router.navigate(['/']);
       });
   }
-  deletePost(postId: string): void {
-    this.http
-      .delete('http://localhost:3000/api/posts/' + postId)
-      .subscribe(() => {
-        this.getPosts();
-      });
+  deletePost(postId: string): Observable<any> {
+    return this.http.delete('http://localhost:3000/api/posts/' + postId);
   }
 }

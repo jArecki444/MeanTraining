@@ -1,3 +1,7 @@
+export interface PostList {
+  posts: Post[];
+  totalPosts: number;
+}
 export interface Post {
   id: string | null;
   title: string;
