@@ -7,6 +7,7 @@ import { AuthData } from './auth.model';
   providedIn: 'root',
 })
 export class AuthService {
+  private token: string;
   constructor(private http: HttpClient) {}
 
   createUser(userEmail: string, userPassword: string): Observable<any> {
@@ -16,5 +17,11 @@ export class AuthService {
   loginUser(userEmail: string, userPassword: string): Observable<any> {
     const authData: AuthData = { email: userEmail, password: userPassword };
     return this.http.post('http://localhost:3000/api/user/login', authData);
+  }
+  setToken(token: string): void {
+    this.token = token;
+  }
+  getToken(): string {
+    return this.token;
   }
 }
