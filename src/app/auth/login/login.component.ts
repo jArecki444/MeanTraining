@@ -29,6 +29,7 @@ export class LoginComponent implements OnInit {
       .subscribe((res) => {
         console.log('login res', res);
         this.authService.setToken(res.token);
+        this.authService.authStatusListener.next(true);
       });
   }
 }
