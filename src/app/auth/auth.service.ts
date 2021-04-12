@@ -7,7 +7,7 @@ import { AuthData } from './auth.model';
   providedIn: 'root',
 })
 export class AuthService {
-  private token: string;
+  private token: string | null;
   public authStatusListener = new Subject<boolean>();
   constructor(private http: HttpClient) {}
 
@@ -19,10 +19,14 @@ export class AuthService {
     const authData: AuthData = { email: userEmail, password: userPassword };
     return this.http.post('http://localhost:3000/api/user/login', authData);
   }
+  logout() {
+    this.token = null;
+    this.authStatusListener.next(false);
+  }
   setToken(token: string): void {
     this.token = token;
   }
-  getToken(): string {
+  getToken(): string | null {
     return this.token;
   }
   getAuthStatusListener() {
