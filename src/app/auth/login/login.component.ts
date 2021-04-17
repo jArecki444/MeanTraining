@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
       .loginUser(this.form.value.email, this.form.value.password)
       .subscribe((res) => {
         console.log('login res', res);
-        this.authService.setToken(res.token);
+        this.authService.setToken(res.token, res.expiresIn);
         this.authService.authStatusListener.next(true);
         this.router.navigate(['/posts']);
       });

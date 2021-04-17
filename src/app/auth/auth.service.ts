@@ -8,6 +8,8 @@ import { AuthData } from './auth.model';
 })
 export class AuthService {
   private token: string | null;
+  // private tokenTimer: NodeJS.Timer;
+  private tokenTimer: any;
   public authStatusListener = new Subject<boolean>();
   constructor(private http: HttpClient) {}
 
@@ -22,9 +24,14 @@ export class AuthService {
   logout() {
     this.token = null;
     this.authStatusListener.next(false);
+    clearTimeout(this.tokenTimer);
   }
-  setToken(token: string): void {
+  setToken(token: string, expiresIn: number): void {
     this.token = token;
+    this.tokenTimer = setTimeout(() => {
+      this.logout();
+      console.log('Token has been expired!');
+    }, expiresIn * 1000);
   }
   getToken(): string | null {
     return this.token;
