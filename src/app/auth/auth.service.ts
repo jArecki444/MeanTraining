@@ -10,6 +10,7 @@ export class AuthService {
   private token: string | null;
   // private tokenTimer: NodeJS.Timer;
   private tokenTimer: any;
+  private userId: string;
   public authStatusListener = new Subject<boolean>();
   constructor(private http: HttpClient) {}
 
@@ -41,6 +42,12 @@ export class AuthService {
   }
   getToken(): string | null {
     return this.token;
+  }
+  getUserId() {
+    return this.userId;
+  }
+  setUserId(id: string) {
+    this.userId = id;
   }
   getAuthStatusListener() {
     return this.authStatusListener.asObservable();

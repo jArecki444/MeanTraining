@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
 
@@ -16,11 +18,13 @@ export class PostListComponent implements OnInit, OnDestroy {
   public currentPage = 1;
   public postsSubscription: Subscription | null = null;
   public pageSizeOptions = [1, 2, 5, 10];
+  public userId: string;
 
-  constructor(public postsService: PostsService) {}
+  constructor(private postsService: PostsService, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadPosts();
+    this.userId = this.authService.getUserId();
   }
 
   ngOnDestroy(): void {

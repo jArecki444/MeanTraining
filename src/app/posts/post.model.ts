@@ -8,6 +8,7 @@ export interface Post {
   content: string;
   file?: File | string;
   imagePath?: string;
+  creator?: string;
 }
 export interface PostResponse {
   _id: string;
