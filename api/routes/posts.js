@@ -35,6 +35,7 @@ router.post(
       title: req.body.title,
       content: req.body.content,
       imagePath: url + "/images/" + req.file.filename,
+      creator: req.userData.userId, //This is fetched from the decodedToken
     });
     post.save();
     res.status(201).json({
@@ -59,11 +60,17 @@ router.put(
       content: req.body.content,
       imagePath: imagePath,
     });
-    Post.updateOne({ _id: req.params.id }, post)
-      .then((response) => {
-        res.status(201).json({
-          message: "Post updated successfully",
-        });
+    Post.updateOne({ _id: req.params.id, creator: req.userData.userId }, post)
+      .then((result) => {
+        if (result.nModified > 0) {
+          res.status(201).json({
+            message: "Post updated successfully",
+          });
+        } else {
+          res.status(401).json({
+            message: "Not authorized!",
+          });
+        }
       })
       .catch((err) => console.log("Catched error!", err));
   }
@@ -107,9 +114,13 @@ router.get("/:id", checkAuth, (req, res, next) => {
 
 router.delete("/:id", checkAuth, (req, res, next) => {
   console.log(req.params);
-  Post.deleteOne({ _id: req.params.id })
-    .then(() => {
-      res.status(200).json({ message: "Post deleted!" });
+  Post.deleteOne({ _id: req.params.id, creator: req.userData.userId })
+    .then((result) => {
+      if (result.n > 0) {
+        res.status(200).json({ message: "Post deleted!" });
+      } else {
+        res.status(401).json({ message: "Not authorized!" });
+      }
     })
     .catch((err) => console.log("Catched error!", err));
 });

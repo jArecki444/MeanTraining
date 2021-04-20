@@ -32,7 +32,7 @@ export class AuthService {
     this.tokenTimer = setTimeout(() => {
       this.logout();
       console.log('Token has been expired!');
-    }, expiresIn);
+    }, expiresIn * 1000);
 
     const now = new Date();
     const expirationDate = new Date(now.getTime() + expiresIn * 1000);
