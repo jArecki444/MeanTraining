@@ -2,6 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { AuthData } from './auth.model';
+import { environment } from '../../environments/environment';
+
+const apiUrl = environment.apiUrl;
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +19,11 @@ export class AuthService {
 
   createUser(userEmail: string, userPassword: string): Observable<any> {
     const authData: AuthData = { email: userEmail, password: userPassword };
-    return this.http.post('http://localhost:3000/api/user/signup', authData);
+    return this.http.post(apiUrl + '/user/signup', authData);
   }
   loginUser(userEmail: string, userPassword: string): Observable<any> {
     const authData: AuthData = { email: userEmail, password: userPassword };
-    return this.http.post('http://localhost:3000/api/user/login', authData);
+    return this.http.post(apiUrl + '/user/login', authData);
   }
   logout() {
     this.token = null;

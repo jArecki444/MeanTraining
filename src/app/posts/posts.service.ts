@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Post, PostList, PostResponse } from './post.model';
+import { environment } from '../../environments/environment';
 
+const apiUrl = environment.apiUrl;
 @Injectable({
   providedIn: 'root',
 })
@@ -15,7 +17,7 @@ export class PostsService {
     const queryParams = `?pageSize=${pageSize}&currentPage=${currentPage}`;
     return this.http
       .get<{ message: string; posts: any; totalPosts: number }>(
-        'http://localhost:3000/api/posts' + queryParams
+        apiUrl + '/posts' + queryParams
       )
       .pipe(
         map((postData: any) => {
@@ -26,7 +28,7 @@ export class PostsService {
                 content: post.content,
                 id: post._id,
                 imagePath: post.imagePath,
-                creator: post.creator
+                creator: post.creator,
               };
             }),
             totalPosts: postData.totalPosts,
@@ -36,7 +38,7 @@ export class PostsService {
   }
 
   getPost(id: string): Observable<PostResponse> {
-    return this.http.get<PostResponse>(`http://localhost:3000/api/posts/${id}`);
+    return this.http.get<PostResponse>(apiUrl + `/posts/${id}`);
   }
 
   addPost(post: Post): void {
@@ -47,7 +49,7 @@ export class PostsService {
       postData.append('image', post.file, 'fileName');
     }
     this.http
-      .post<{ message: string }>('http://localhost:3000/api/posts', postData)
+      .post<{ message: string }>(apiUrl + '/posts', postData)
       .subscribe((res) => {
         console.log(res.message);
         this.getPosts(10, 0);
@@ -75,14 +77,12 @@ export class PostsService {
         imagePath: postImage,
       };
     }
-    this.http
-      .put(`http://localhost:3000/api/posts/${postId}`, postData)
-      .subscribe((res) => {
-        console.log('updatePost', res);
-        this.router.navigate(['/']);
-      });
+    this.http.put(apiUrl + `/posts/${postId}`, postData).subscribe((res) => {
+      console.log('updatePost', res);
+      this.router.navigate(['/']);
+    });
   }
   deletePost(postId: string): Observable<any> {
-    return this.http.delete('http://localhost:3000/api/posts/' + postId);
+    return this.http.delete(apiUrl + '/posts/' + postId);
   }
 }
