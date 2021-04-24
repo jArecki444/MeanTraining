@@ -44,10 +44,20 @@ exports.createPost = (req, res, next) => {
     imagePath: url + "/images/" + req.file.filename,
     creator: req.userData.userId, //This is fetched from the decodedToken
   });
-  post.save();
-  res.status(201).json({
-    message: "Post added successfully",
-  });
+  post
+    .save()
+    .then((createdPost) => {
+      res.status(201).json({
+        message: "Post added successfully",
+        post: createdPost,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Creating a post failed!",
+        error: error
+      });
+    });
 };
 
 exports.updatePost = (req, res, next) => {
