@@ -12,7 +12,7 @@ const MIME_TYPE_MAP = {
       if (isValid) {
         error = null;
       }
-      callback(error, "api/images");
+      callback(error, "images");
     },
     filename: (req, file, callback) => {
       const name = file.originalname.toLocaleLowerCase().split(" ").join("-");

@@ -2,7 +2,7 @@
 
 # compiled output
 /dist
-/api/images
+/images
 /tmp
 /out-tsc
 # Only exists if Bazel was run
